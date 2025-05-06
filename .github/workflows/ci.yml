@@ -27,7 +27,7 @@ jobs:
 
       - name: Run tests
         run: |
-          vendor/bin/phpunit --configuration phpunit.xml.dist
+          vendor/bin/phpunit --configuration phpunit.dist.xml
 
       - name: Run linting and prettier
         run: |
