@@ -1,0 +1,57 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  ci:
+    name: Run checks
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: GameVerse
+          POSTGRES_USER: symfony
+          POSTGRES_PASSWORD: symfony
+        ports: [5432:5432]
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    env:
+      DATABASE_URL: "postgresql://symfony:symfony@localhost:5432/GameVerse?serverVersion=15&charset=utf8"
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.2'
+          coverage: none
+
+      - name: Install PHP dependencies
+        run: composer install --no-interaction --prefer-dist
+
+      - name: Run PHP CS Fixer
+        run: |
+          docker run -v ${{ github.workspace }}/src:/code ghcr.io/php-cs-fixer/php-cs-fixer:3.48-php8.2 fix --dry-run --diff -- /code
+          docker run -v ${{ github.workspace }}/tests:/code ghcr.io/php-cs-fixer/php-cs-fixer:3.48-php8.2 fix --dry-run --diff -- /code
+
+      - name: Run commitlint
+        run: |
+          docker run --rm -v ${{ github.workspace }}:/mnt -w /mnt node:18 bash -c "npx commitlint --from=HEAD~1 --to=HEAD --verbose"
+
+      - name: Create database
+        run: |
+          php bin/console doctrine:database:create --if-not-exists
+          php bin/console doctrine:migrations:migrate --no-interaction
+
+      - name: Run Symfony tests
+        run: php bin/phpunit
