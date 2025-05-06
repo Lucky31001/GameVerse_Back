@@ -1,0 +1,54 @@
+version: '3.7'
+
+services:
+  # Service PHP pour exécuter l'application Symfony
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: api
+    environment:
+      DATABASE_URL: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database:5432/${POSTGRES_DB}"
+      APP_ENV: ${APP_ENV:-dev}
+      APP_SECRET: ${APP_SECRET:-dev_secret_key}
+    volumes:
+      - .:/app  # Monter le répertoire local dans le container
+    ports:
+      - "8000:8000"  # Exposer le port 9000 de PHP-FPM sur le port 8000
+    depends_on:
+      - database  # Dépendance du service "database"
+    networks:
+      - gameverse
+
+  # Service PostgreSQL pour la base de données
+  database:
+    image: postgres:16-alpine
+    container_name: database
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-app}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-!ChangeMe!}
+      POSTGRES_USER: ${POSTGRES_USER:-app}
+    volumes:
+      - database_data:/var/lib/postgresql/data:rw
+    networks:
+      - gameverse
+
+  adminer:
+    image: adminer
+    ports:
+      - "8080:8080"
+    depends_on:
+      - database
+    networks:
+      - gameverse
+
+
+# Volumes pour persister les données de la base de données
+volumes:
+  database_data:
+
+# Réseau de communication entre les services
+networks:
+  gameverse:
+    name: gameverse
+    driver: bridge
