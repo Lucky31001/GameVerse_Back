@@ -29,3 +29,16 @@ cd GameVerse_Back
 make install
 make run
 ```
+
+---
+
+## 🧪 Accès à [API PLatform](http://localhost:8000/api)
+
+---
+
+## 📝 À faire (roadmap)
+
+- [ ] Ajouter tests unitaires
+- [ ] Ajouter fixtures pour peupler la BDD
+- [ ] Ajouter les endpoints de recherche avancée
+- [ ] Lier avec le front GameVerse_Front
