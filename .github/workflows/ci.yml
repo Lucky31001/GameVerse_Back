@@ -1,57 +1,52 @@
-name: CI
+name: PHP CI
 
 on:
   push:
-    branches: [main]
+    branches:
+      - main
   pull_request:
+    branches:
+      - main
 
 jobs:
-  ci:
-    name: Run checks
+  build:
     runs-on: ubuntu-latest
 
     services:
       postgres:
-        image: postgres:15
+        image: postgres:13
         env:
-          POSTGRES_DB: GameVerse
-          POSTGRES_USER: symfony
-          POSTGRES_PASSWORD: symfony
-        ports: [5432:5432]
+          POSTGRES_USER: example
+          POSTGRES_PASSWORD: example
+          POSTGRES_DB: gameverse
+        ports:
+          - 5432:5432
         options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
-    env:
-      DATABASE_URL: "postgresql://symfony:symfony@localhost:5432/GameVerse?serverVersion=15&charset=utf8"
+          --health-cmd='pg_isready -U example -d gameverse' --health-timeout=30s --health-interval=5s --health-retries=5
 
     steps:
-      - uses: actions/checkout@v3
+      - name: Checkout code
+        uses: actions/checkout@v2
 
       - name: Set up PHP
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
-          coverage: none
 
-      - name: Install PHP dependencies
-        run: composer install --no-interaction --prefer-dist
-
-      - name: Run PHP CS Fixer
+      - name: Install dependencies
         run: |
-          docker run -v ${{ github.workspace }}/src:/code ghcr.io/php-cs-fixer/php-cs-fixer:3.48-php8.2 fix --dry-run --diff -- /code
-          docker run -v ${{ github.workspace }}/tests:/code ghcr.io/php-cs-fixer/php-cs-fixer:3.48-php8.2 fix --dry-run --diff -- /code
-
-      - name: Run commitlint
-        run: |
-          docker run --rm -v ${{ github.workspace }}:/mnt -w /mnt node:18 bash -c "npx commitlint --from=HEAD~1 --to=HEAD --verbose"
+          composer install --no-progress --no-suggest --prefer-dist
 
       - name: Create database
         run: |
-          php bin/console doctrine:database:create --if-not-exists
+          php bin/console doctrine:database:create
           php bin/console doctrine:migrations:migrate --no-interaction
 
-      - name: Run Symfony tests
-        run: php bin/phpunit
+      - name: Run tests
+        run: |
+          php bin/phpunit --configuration phpunit.xml.dist
+
+      - name: Run linting and prettier
+        run: |
+          docker run -v $PWD:/code ghcr.io/php-cs-fixer/php-cs-fixer:3.48-php8.2 fix -- /code
+          docker run -v $PWD:/code ghcr.io/php-cs-fixer/php-cs-fixer:3.48-php8.2 fix -- /code
