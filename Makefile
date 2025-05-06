@@ -11,8 +11,7 @@ install: ## Install all dependencies
 
 run: ## Launch docker-compose stack
 	$(DOCKER_COMPOSE) run --rm api bin/console doctrine:database:create ||true
-	$(DOCKER_COMPOSE) run --rm api sh -c "./wait-for-it.sh -t 30 database:5432"
-# && php bin/console doctrine:migrations:migrate --no-interaction"
+	$(DOCKER_COMPOSE) run --rm api sh -c "./wait-for-it.sh -t 30 database:5432 && php bin/console doctrine:migrations:migrate --no-interaction"
 	$(DOCKER_COMPOSE) up --remove-orphans -d
 
 stop: ## Stop the Docker containers
