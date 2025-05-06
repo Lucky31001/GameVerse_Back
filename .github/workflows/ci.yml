@@ -12,18 +12,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres:13
-        env:
-          POSTGRES_USER: example
-          POSTGRES_PASSWORD: example
-          POSTGRES_DB: gameverse
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd='pg_isready -U example -d gameverse' --health-timeout=30s --health-interval=5s --health-retries=5
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
@@ -36,11 +24,6 @@ jobs:
       - name: Install dependencies
         run: |
           composer install --no-progress --no-suggest --prefer-dist
-
-      - name: Create database
-        run: |
-          php bin/console doctrine:database:create
-          php bin/console doctrine:migrations:migrate --no-interaction
 
       - name: Run tests
         run: |
