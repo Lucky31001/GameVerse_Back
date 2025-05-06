@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
   pull_request:
-    branches: [main]
+    branches: "**"
 
 jobs:
   install:
@@ -60,3 +60,10 @@ jobs:
 
       - name: Run php-cs-fixer on tests/
         run: docker run -v $PWD/tests:/code ghcr.io/php-cs-fixer/php-cs-fixer:3.48-php8.2 fix --dry-run --diff -- /code
+
+  deploy:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    steps:
+      - name: Deploy to prod
+        run: echo "Deploying only on merge to main!"
