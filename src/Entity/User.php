@@ -4,9 +4,9 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Post;
+use App\Controller\RegisterController;
 use App\Dto\RegisterUserDTO;
 use App\Repository\UserRepository;
-use App\Processor\RegisterUserProcessor;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
@@ -16,10 +16,11 @@ use Symfony\Component\Uid\Uuid;
 #[ApiResource]
 #[ApiResource(
     operations: [
+        new Post(),
         new Post(
             uriTemplate: '/register',
-            input: RegisterUserDTO::class,
-            processor: RegisterUserProcessor::class
+            controller: RegisterController::class,
+            input: RegisterUserDTO::class
         )
     ]
 )]#[ORM\Entity(repositoryClass: UserRepository::class)]
@@ -33,7 +34,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     private ?Uuid $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 255, unique: true)]
     private ?string $username = null;
 
     /**
@@ -51,6 +52,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column]
     private ?string $password = null;
 
+    public function __construct()
+    {
+        $this->id = Uuid::v4();
+        $this->roles[] = 'ROLE_USER';
+    }
     public function getId(): ?Uuid
     {
         return $this->id;

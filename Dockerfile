@@ -37,6 +37,7 @@ RUN apt-get update && apt-get install -y \
     libc-client-dev \
     libkrb5-dev \
     --no-install-recommends \
+    openssl \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 

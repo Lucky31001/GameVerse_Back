@@ -6,9 +6,12 @@ services:
       dockerfile: Dockerfile
     container_name: api
     environment:
-      DATABASE_URL: "postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@database:5432/${POSTGRES_DB}"
+      DATABASE_URL: ${DATABASE_URL:-postgresql://app:!ChangeMe!@database:5432/app?serverVersion=16&charset=utf8}
       APP_ENV: ${APP_ENV:-dev}
       APP_SECRET: ${APP_SECRET:-dev_secret_key}
+      JWT_SECRET_KEY: ${JWT_SECRET_KEY:-!ChangeMe!}
+      JWT_PUBLIC_KEY: ${JWT_PUBLIC_KEY:-!ChangeMe!}
+      JWT_PASSPHRASE: ${JWT_PASSPHRASE:-!ChangeMe!}
     volumes:
       - .:/app  # Monter le répertoire local dans le container
     ports:
