@@ -1,5 +1,3 @@
-version: '3.7'
-
 services:
   # Service PHP pour exécuter l'application Symfony
   api:
