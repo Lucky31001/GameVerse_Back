@@ -9,9 +9,6 @@
     "prepare": "husky"
   },
   "lint-staged": {
-    "*.{ts,json,md,yml}": [
-      "prettier --check"
-    ],
     "*.php": [
       "make prettier"
     ]
