@@ -45,8 +45,9 @@ jobs:
           path: vendor
           key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
 
-      - name: Run PHPUnit tests
-        run: vendor/bin/phpunit --configuration phpunit.dist.xml
+      - name: Run tests
+        run: |
+          vendor/bin/phpunit --configuration phpunit.dist.xml
 
   lint:
     runs-on: ubuntu-latest
