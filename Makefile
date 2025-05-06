@@ -7,6 +7,7 @@ help: ## Show help like directly using make
 install: ## Install all dependencies
 	$(DOCKER_COMPOSE) build
 	$(DOCKER_COMPOSE) run --rm api composer install
+	npm install
 
 run: ## Launch docker-compose stack
 	$(DOCKER_COMPOSE) run --rm api bin/console doctrine:database:create ||true

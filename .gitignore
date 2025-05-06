@@ -10,7 +10,8 @@
 .idea/
 symfony.lock
 composer.lock
-
+node_modules/
+node_modules/.package-lock.json
 ###> lexik/jwt-authentication-bundle ###
 /config/jwt/*.pem
 ###< lexik/jwt-authentication-bundle ###
