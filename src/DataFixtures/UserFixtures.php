@@ -24,6 +24,7 @@ class UserFixtures extends Fixture
         $user->setRoles(['ROLE_USER']);
         $user->setPassword($this->passwordHasher->hashPassword($user, "Azerty123."));
         $this->userRepository->save($user);
-        $this->addReference('user_test', $user);
+        $this->
+        addReference('user_test', $user);
     }
 }

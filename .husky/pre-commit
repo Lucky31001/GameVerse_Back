@@ -1,2 +1,1 @@
-docker run -v ${PWD}/src:/code ghcr.io/php-cs-fixer/php-cs-fixer:3.48-php8.2 fix --dry-run --diff -- /code
-docker run -v ${PWD}/tests:/code ghcr.io/php-cs-fixer/php-cs-fixer:3.48-php8.2 fix --dry-run --diff -- /code
+npx lint-staged
