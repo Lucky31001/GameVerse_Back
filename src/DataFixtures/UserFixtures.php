@@ -20,11 +20,10 @@ class UserFixtures extends Fixture
     {
         $user = new User();
         $user->setEmail('test@test.com');
-        $user->setPassword($this->passwordHasher->hashPassword("Azerty123.")); // Assure-toi d'utiliser un hasher pour le mot de passe
+        $user->setUsername('test');
         $user->setRoles(['ROLE_USER']);
-
+        $user->setPassword($this->passwordHasher->hashPassword($user, "Azerty123."));
         $this->userRepository->save($user);
-
         $this->addReference('user_test', $user);
     }
 }
