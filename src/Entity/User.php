@@ -4,7 +4,9 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Post;
+use App\Controller\LoginController;
 use App\Controller\RegisterController;
+use App\Dto\LoginUserDTO;
 use App\Dto\RegisterUserDTO;
 use App\Repository\UserRepository;
 use Doctrine\ORM\Mapping as ORM;
@@ -18,9 +20,14 @@ use Symfony\Component\Uid\Uuid;
     operations: [
         new Post(),
         new Post(
-            uriTemplate: '/register',
+            uriTemplate: '/auth/register',
             controller: RegisterController::class,
             input: RegisterUserDTO::class
+        ),
+        new Post(
+            uriTemplate:  '/auth/login',
+            controller: LoginController::class,
+            input: LoginUserDTO::class
         )
     ]
 )]#[ORM\Entity(repositoryClass: UserRepository::class)]

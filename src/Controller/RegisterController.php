@@ -10,9 +10,11 @@ use App\Repository\UserRepository;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
+#[AsController]
 class RegisterController extends AbstractController
 {
     public function __construct(
@@ -34,7 +36,6 @@ class RegisterController extends AbstractController
             return new JsonResponse(['errors' => $errors], 400);
         }
 
-        // Vérifier si l'email ou le nom d'utilisateur existe déjà
         if ($this->userRepository->findOneBy(['email' => $dto->getEmail()])) {
             return new JsonResponse(['error' => 'Email already used'], 400);
         }
