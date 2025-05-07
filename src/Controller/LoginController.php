@@ -6,18 +6,14 @@ namespace App\Controller;
 
 use App\Dto\LoginUserDTO;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
-use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Security\Core\User\UserProviderInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
-use App\Entity\User;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 #[AsController]
-
 class LoginController extends AbstractController
 {
     public function __construct(
