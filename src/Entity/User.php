@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use ApiPlatform\Metadata\Get;
+use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use App\Controller\LoginController;
 use App\Controller\MeController;
@@ -18,11 +19,15 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Uid\Uuid;
 
-#[ApiResource]
 #[ApiResource(
     operations: [
+        new GetCollection(
+            normalizationContext: ['groups' => ['user:collection:read']],
+        ),
         new Post(),
-        new Get(),
+        new Get(
+            normalizationContext: ['groups' => ['user:item:read']],
+        ),
         new Post(
             uriTemplate: '/auth/register',
             controller: RegisterController::class,
@@ -36,13 +41,13 @@ use Symfony\Component\Uid\Uuid;
         new Get(
             uriTemplate: '/me',
             controller: MeController::class,
-            normalizationContext: ['groups' => ['user:read']],
             securityMessage: 'You must be logged in to access this resource.',
             read: false
         )
     ],
-    normalizationContext: ['groups' => ['user:read']]
-)]#[ORM\Entity(repositoryClass: UserRepository::class)]
+)]
+#[ApiResource]
+#[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_USERNAME', fields: ['username'])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
@@ -53,18 +58,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     private ?Uuid $id = null;
 
-    #[Groups(groups: ['user:read'])]
+    #[Groups(groups: ['user:item:read', 'user:collection:read'])]
     #[ORM\Column(length: 255, unique: true)]
     private ?string $username = null;
 
     /**
      * @var list<string> The user roles
      */
-    #[Groups(groups: ['user:read'])]
+    #[Groups(groups: ['user:collection:read'])]
     #[ORM\Column]
     private array $roles = [];
 
-    #[Groups(groups: ['user:read'])]
+    #[Groups(groups: ['user:item:read', 'user:collection:read'])]
     #[ORM\Column(length: 255, unique: true)]
     private ?string $email = null;
 
