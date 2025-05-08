@@ -31,8 +31,8 @@ security:
             provider: app_user_provider
 
     access_control:
-        - { path: ^/auth/(login|register), roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/auth/token/refresh, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/auth/(login|register|token/refresh), roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/auth/logout, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/me, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/, roles: PUBLIC_ACCESS }
 
