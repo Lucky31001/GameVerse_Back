@@ -54,6 +54,9 @@ class LoginController extends AbstractController
         if (!$this->passwordHasher->isPasswordValid($user, $dto->getPassword())) {
             return new JsonResponse(['error' => 'Invalid credentials.'], 401);
         }
+        if ($this->refreshTokenManager->getLastFromUsername($user->getUserIdentifier())) {
+            $this->refreshTokenManager->delete($this->refreshTokenManager->getLastFromUsername($user->getUserIdentifier()));
+        }
 
         $refreshToken = $this->refreshTokenGenerator->createForUserWithTtl($user, 2592000);
 
