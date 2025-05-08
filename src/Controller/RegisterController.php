@@ -56,10 +56,7 @@ class RegisterController extends AbstractController
         $user->setPassword($this->passwordHasher->hashPassword($user, $dto->getPassword()));
 
 
-        $refreshToken = new RefreshToken();
-        $refreshToken->setRefreshToken($this->refreshTokenGenerator->createForUserWithTtl($user, 2592000));
-        $refreshToken->setUsername($user->getUserIdentifier());
-        $refreshToken->setValid((new \DateTime())->modify('+30 days'));
+        $refreshToken = $this->refreshTokenGenerator->createForUserWithTtl($user, 2592000);
 
         $this->refreshTokenManager->save($refreshToken);
         $token = $this->tokenGenerator->create($user);
