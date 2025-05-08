@@ -3,10 +3,12 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
 use App\Controller\LoginController;
+use App\Controller\LogoutController;
 use App\Controller\MeController;
 use App\Controller\RegisterController;
 use App\Dto\LoginUserDTO;
@@ -38,9 +40,16 @@ use Symfony\Component\Uid\Uuid;
             controller: LoginController::class,
             input: LoginUserDTO::class
         ),
+        new Delete(
+            uriTemplate: '/auth/logout',
+            controller: LogoutController::class,
+            security: 'is_granted("IS_AUTHENTICATED_FULLY")',
+            securityMessage: 'You must be logged in to access this resource.',
+        ),
         new Get(
             uriTemplate: '/me',
             controller: MeController::class,
+            security: 'is_granted("IS_AUTHENTICATED_FULLY")',
             securityMessage: 'You must be logged in to access this resource.',
             read: false
         )

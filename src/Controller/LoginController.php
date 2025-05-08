@@ -9,6 +9,7 @@ use App\Entity\RefreshToken;
 use Gesdinet\JWTRefreshTokenBundle\Generator\RefreshTokenGeneratorInterface;
 use Gesdinet\JWTRefreshTokenBundle\Model\RefreshTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\AsController;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -20,6 +21,7 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class LoginController extends AbstractController
 {
     public function __construct(
+        private Security $security,
         private UserPasswordHasherInterface $passwordHasher,
         private UserProviderInterface $userProvider,
         private ValidatorInterface $validator,
