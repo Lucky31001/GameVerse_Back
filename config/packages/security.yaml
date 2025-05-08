@@ -32,7 +32,7 @@ security:
 
     access_control:
         - { path: ^/auth/(login|register), roles: IS_AUTHENTICATED_ANONYMOUSLY }
-        - { path: ^/auth/token/refresh, roles: IS_AUTHENTICATED_REMEMBERED }
+        - { path: ^/auth/token/refresh, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/me, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/, roles: PUBLIC_ACCESS }
 
