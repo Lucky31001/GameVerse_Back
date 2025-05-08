@@ -45,7 +45,9 @@ use Symfony\Component\Uid\Uuid;
             read: false
         )
     ],
-)]#[ORM\Entity(repositoryClass: UserRepository::class)]
+)]
+#[ApiResource]
+#[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_USERNAME', fields: ['username'])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
