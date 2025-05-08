@@ -28,6 +28,7 @@ security:
     access_control:
         - { path: ^/auth/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
         - { path: ^/auth/register, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/me, roles: IS_AUTHENTICATED_FULLY }
         - { path: ^/, roles: PUBLIC_ACCESS }
 
 when@test:
