@@ -3,8 +3,10 @@
 namespace App\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
+use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\Post;
 use App\Controller\LoginController;
+use App\Controller\MeController;
 use App\Controller\RegisterController;
 use App\Dto\LoginUserDTO;
 use App\Dto\RegisterUserDTO;
@@ -13,12 +15,14 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Types\UuidType;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Uid\Uuid;
 
 #[ApiResource]
 #[ApiResource(
     operations: [
         new Post(),
+        new Get(),
         new Post(
             uriTemplate: '/auth/register',
             controller: RegisterController::class,
@@ -28,8 +32,16 @@ use Symfony\Component\Uid\Uuid;
             uriTemplate:  '/auth/login',
             controller: LoginController::class,
             input: LoginUserDTO::class
+        ),
+        new Get(
+            uriTemplate: '/me',
+            controller: MeController::class,
+            normalizationContext: ['groups' => ['user:read']],
+            securityMessage: 'You must be logged in to access this resource.',
+            read: false
         )
-    ]
+    ],
+    normalizationContext: ['groups' => ['user:read']]
 )]#[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: '`user`')]
 #[ORM\UniqueConstraint(name: 'UNIQ_IDENTIFIER_USERNAME', fields: ['username'])]
@@ -41,15 +53,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\CustomIdGenerator(class: 'doctrine.uuid_generator')]
     private ?Uuid $id = null;
 
+    #[Groups(groups: ['user:read'])]
     #[ORM\Column(length: 255, unique: true)]
     private ?string $username = null;
 
     /**
      * @var list<string> The user roles
      */
+    #[Groups(groups: ['user:read'])]
     #[ORM\Column]
     private array $roles = [];
 
+    #[Groups(groups: ['user:read'])]
     #[ORM\Column(length: 255, unique: true)]
     private ?string $email = null;
 
@@ -88,7 +103,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->username;
+        return (string) $this->email;
     }
 
     /**
