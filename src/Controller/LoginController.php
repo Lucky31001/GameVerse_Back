@@ -5,6 +5,9 @@
 namespace App\Controller;
 
 use App\Dto\LoginUserDTO;
+use App\Entity\RefreshToken;
+use Gesdinet\JWTRefreshTokenBundle\Generator\RefreshTokenGeneratorInterface;
+use Gesdinet\JWTRefreshTokenBundle\Model\RefreshTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpKernel\Attribute\AsController;
@@ -21,6 +24,8 @@ class LoginController extends AbstractController
         private UserProviderInterface $userProvider,
         private ValidatorInterface $validator,
         private JWTTokenManagerInterface $tokenGenerator,
+        private RefreshTokenManagerInterface $refreshTokenManager,
+        private RefreshTokenGeneratorInterface $refreshTokenGenerator,
     ) {
 
     }
@@ -50,8 +55,14 @@ class LoginController extends AbstractController
             return new JsonResponse(['error' => 'Invalid credentials.'], 401);
         }
 
+        $refreshToken = new RefreshToken();
+        $refreshToken->setRefreshToken($this->refreshTokenGenerator->createForUserWithTtl($user, 2592000));
+        $refreshToken->setUsername($user->getUserIdentifier());
+        $refreshToken->setValid((new \DateTime())->modify('+30 days'));
+
+        $this->refreshTokenManager->save($refreshToken);
         $token = $this->tokenGenerator->create($user);
 
-        return new JsonResponse(['token' => $token]);
+        return new JsonResponse(['token' => $token, 'refresh_token' => $refreshToken->getRefreshToken()], 200);
     }
 }

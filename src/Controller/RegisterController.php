@@ -5,8 +5,11 @@
 namespace App\Controller;
 
 use App\Dto\RegisterUserDTO;
+use App\Entity\RefreshToken;
 use App\Entity\User;
 use App\Repository\UserRepository;
+use Gesdinet\JWTRefreshTokenBundle\Generator\RefreshTokenGeneratorInterface;
+use Gesdinet\JWTRefreshTokenBundle\Model\RefreshTokenManagerInterface;
 use Lexik\Bundle\JWTAuthenticationBundle\Services\JWTTokenManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -21,7 +24,9 @@ class RegisterController extends AbstractController
         private UserPasswordHasherInterface $passwordHasher,
         private UserRepository $userRepository,
         private JWTTokenManagerInterface $tokenGenerator,
-        private ValidatorInterface $validator
+        private ValidatorInterface $validator,
+        private RefreshTokenManagerInterface $refreshTokenManager,
+        private RefreshTokenGeneratorInterface $refreshTokenGenerator,
     ) {
     }
 
@@ -50,6 +55,13 @@ class RegisterController extends AbstractController
 
         $user->setPassword($this->passwordHasher->hashPassword($user, $dto->getPassword()));
 
+
+        $refreshToken = new RefreshToken();
+        $refreshToken->setRefreshToken($this->refreshTokenGenerator->createForUserWithTtl($user, 2592000));
+        $refreshToken->setUsername($user->getUserIdentifier());
+        $refreshToken->setValid((new \DateTime())->modify('+30 days'));
+
+        $this->refreshTokenManager->save($refreshToken);
         $token = $this->tokenGenerator->create($user);
 
         $this->userRepository->save($user);
@@ -57,7 +69,8 @@ class RegisterController extends AbstractController
 
         return new JsonResponse([
             'username' => $user->getUsername(),
-            'token' => $token
+            'token' => $token,
+            'refresh_token' => $refreshToken->getRefreshToken(),
         ]);
     }
 }
