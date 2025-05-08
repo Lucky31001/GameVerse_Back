@@ -5,7 +5,6 @@
 namespace App\Controller;
 
 use App\Dto\RegisterUserDTO;
-use App\Entity\RefreshToken;
 use App\Entity\User;
 use App\Repository\UserRepository;
 use Gesdinet\JWTRefreshTokenBundle\Generator\RefreshTokenGeneratorInterface;
