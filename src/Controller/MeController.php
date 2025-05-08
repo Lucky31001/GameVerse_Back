@@ -7,13 +7,9 @@ use Symfony\Bundle\SecurityBundle\Security;
 
 class MeController extends AbstractController
 {
-    public function __construct(private Security $security)
+    public function __invoke(Security $security)
     {
-    }
-
-    public function __invoke()
-    {
-        $user = $this->security->getUser();
+        $user = $security->getUser();
 
         if ($user === null) {
             return $this->json(['error' => 'User not found.'], 404);
