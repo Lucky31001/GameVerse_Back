@@ -30,7 +30,7 @@ class ChangePasswordController extends AbstractController
         $user = $this->security->getUser();
 
         if (!$user) {
-            return new JsonResponse(['error' => 'You must be logged in'], 404);
+            return new JsonResponse(['error' => 'You must be logged in'], 401);
         }
 
         $violations = $this->validator->validate($dto);
