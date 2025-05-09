@@ -7,10 +7,12 @@ use ApiPlatform\Metadata\Delete;
 use ApiPlatform\Metadata\Get;
 use ApiPlatform\Metadata\GetCollection;
 use ApiPlatform\Metadata\Post;
+use App\Controller\ChangePasswordController;
 use App\Controller\LoginController;
 use App\Controller\LogoutController;
 use App\Controller\MeController;
 use App\Controller\RegisterController;
+use App\Dto\ChangePasswordDTO;
 use App\Dto\LoginUserDTO;
 use App\Dto\RegisterUserDTO;
 use App\Repository\UserRepository;
@@ -52,7 +54,14 @@ use Symfony\Component\Uid\Uuid;
             security: 'is_granted("IS_AUTHENTICATED_FULLY")',
             securityMessage: 'You must be logged in to access this resource.',
             read: false
-        )
+        ),
+        new Post(
+            uriTemplate: '/auth/change-password',
+            controller: ChangePasswordController::class,
+            security: 'is_granted("IS_AUTHENTICATED_FULLY")',
+            securityMessage: 'You must be logged in to access this resource.',
+            input: ChangePasswordDTO::class,
+        ),
     ],
 )]
 #[ApiResource]
